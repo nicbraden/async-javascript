@@ -1,0 +1,197 @@
+<!doctype html>
+<htlm lang="en-US">
+<head>
+  <title>Baseball Data</title>
+  <meta charset="UTF-8">
+  <meta  name="content" description="Basesball JSON">
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body>
+  <main id="wrap">
+    <h1 text-align="center">Baseball Data</h1>
+    <div class="divContainer"> 
+      <legend>Select a Year</legend>
+      <select id="yearFilter">
+        <option>2015</option>
+        <option>2016</option>
+        <option>2017</option>
+      </select>
+      <br />
+      <br />
+      <legend>Select a Month</legend>
+      <select id="monthFilter">
+        <option>01</option>
+        <option>02</option>
+        <option>03</option>
+        <option>04</option>
+        <option>05</option>
+        <option>06</option>
+        <option>07</option>
+        <option>08</option>
+        <option>09</option>
+        <option>10</option>
+        <option>11</option>
+        <option>12</option>
+      </select>
+      <br>
+      <br>
+      <legend>Select a Day</legend>
+      <select id="dayFilter">
+        <option>01</option>
+        <option>02</option>
+        <option>03</option>
+        <option>04</option>
+        <option>05</option>
+        <option>06</option>
+        <option>07</option>
+        <option>08</option>
+        <option>09</option>
+        <option>10</option>
+        <option>11</option>
+        <option>12</option>
+        <option>13</option>
+        <option>14</option>
+        <option>15</option>
+        <option>16</option>
+        <option>17</option>
+        <option>18</option>
+        <option>19</option>
+        <option>20</option>
+        <option>21</option>
+        <option>22</option>
+        <option>23</option>
+        <option>24</option>
+        <option>25</option>
+        <option>26</option>
+        <option>27</option>
+        <option>28</option>
+        <option>29</option>
+        <option>30</option>
+        <option>31</option>
+      </select>
+      <br>
+      <br>
+      <input type="button" value="Retrieve" onclick="retrieve();">
+    </div>
+
+    <div class="dataOutput">
+      <p>Home Team Name:<br />
+      <input type="text" name="homeTeam" id="homeTeam"><br />
+      </p>
+      Away Team Name:<br />
+      <input type="text" name="awayTeam" id="awayTeam"><br />
+      <p>
+       </p>
+      Winning Pitcher:<br />
+      <input type="text" name="winningP" id="winningP"><br />
+      <p>
+       </p>
+      Losing Pitcher:<br />
+      <input type="text" name="losingP" id="losingP"><br />
+      <p>
+       </p>
+      Venue:<br />
+      <input type="text" name="venue" id="venue"><br />
+      <br />
+      <input type="button" value="Previous Game" onclick="previous();">
+      <input type="button" value="Next Game" onclick="next();">
+    </div>
+  </main>
+
+  <script>
+    //Globals--------------------------------------------------------------------------------------------------------------------
+    var index;
+    var baseballObject;
+    
+    //Functions--------------------------------------------------------------------------------------------------------------------
+    
+    function retrieve() {
+      
+      var year = document.getElementById("yearFilter").value; 
+      var month = document.getElementById("monthFilter").value;
+      var day = document.getElementById("dayFilter").value;
+
+    
+      var mlbUrl = "http://gd2.mlb.com/components/game/mlb/year_" + year 
+                     + "/month_"+ month + "/day_" + day + "/master_scoreboard.json";
+        
+      var baseballJSON = getBaseball(mlbUrl);
+      // //parse data into object
+      baseballObject = JSON.parse(baseballJSON);
+      //console.log(baseballObject);
+      
+      index = 0; 
+      print();     
+    }
+
+    function getBaseball(Url){
+      var response = ""; 
+      var xmlHttp = new XMLHttpRequest();
+      
+      if(xmlHttp !== null){
+        //use a "GET" request to open a connection
+        xmlHttp.open("GET", Url, false);
+        //send the "GET" request
+        xmlHttp.send(null);
+        //receive a response
+        resp = xmlHttp.responseText;
+      }
+      return resp; // return JSON
+    }
+
+    function previous()
+    {
+      if (index > 0)
+      {
+        index--;
+      }
+      print();
+    }
+
+    function next()
+    {
+      if (index < baseballObject.data.games.game.length)
+      {
+        index++;
+      }
+      print();
+    }
+
+    function print()
+    {
+      var home = baseballObject.data.games.game[index].home_team_name;
+      var away = baseballObject.data.games.game[index].away_team_name;
+      var winning = baseballObject.data.games.game[index].winning_pitcher.first;
+      var winningL = baseballObject.data.games.game[index].winning_pitcher.last;
+      var losing = baseballObject.data.games.game[index].losing_pitcher.first;
+      var losingL = baseballObject.data.games.game[index].losing_pitcher.last;
+      var v = baseballObject.data.games.game[index].venue;
+
+      document.getElementById("homeTeam").value = home;
+      document.getElementById("awayTeam").value = away;
+      document.getElementById("venue").value = v;
+
+      if (baseballObject.data.games.game[index].winning_pitcher.first == "")
+      {
+        document.getElementById("winningP").value = "No data";
+      }
+      else
+      {
+          document.getElementById("winningP").value = winning + " " + winningL;
+      }
+
+      if (baseballObject.data.games.game[index].losing_pitcher.first == "")
+      {
+        document.getElementById("losingP").value = "No data";
+      }
+      else
+      {
+          document.getElementById("losingP").value = losing + " " + losingL;
+      }
+    }
+
+  </script>
+
+</body>
+</htlm>

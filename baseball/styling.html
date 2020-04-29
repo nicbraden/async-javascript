@@ -1,0 +1,233 @@
+<!doctype html>
+<htlm lang="en-US">
+<head>
+  <title>Baseball Data</title>
+  <meta charset="UTF-8">
+  <meta  name="content" description="Basesball JSON">
+</head>
+
+<!-- <style>
+  body {
+  background-image: url("baseball1.jpg");
+  margin-left: 120px;
+  font-family: 'Roboto', sans-serif; /*quotes are used for fonts with two words - not needed here but for practice */
+}
+  fieldset {
+  padding:10px;
+  width:250px;
+  text-align: left;
+  font-size: 20px:;
+}
+  
+</style> -->
+ 
+ 
+<body>
+  <header></header>
+  <nav></nav>
+  
+  <main>
+    <form>
+      <h1>Baseball Data</h1>
+    <fieldset><legend>Select a Year</legend>
+      <select id="yearFilter">
+        <option>2015</option>
+        <option>2016</option>
+        <option>2017</option>
+      </select>
+      <br />
+      <br />
+      <legend>Select a Month</legend>
+      <select id="monthFilter">
+        <option>01</option>
+        <option>02</option>
+        <option>03</option>
+        <option>04</option>
+        <option>05</option>
+        <option>06</option>
+        <option>07</option>
+        <option>08</option>
+        <option>09</option>
+        <option>10</option>
+        <option>11</option>
+        <option>12</option>
+      </select>
+      <br>
+      <br>
+      <legend>Select a Day</legend>
+      <select id="dayFilter">
+        <option>01</option>
+        <option>02</option>
+        <option>03</option>
+        <option>04</option>
+        <option>05</option>
+        <option>06</option>
+        <option>07</option>
+        <option>08</option>
+        <option>09</option>
+        <option>10</option>
+        <option>11</option>
+        <option>12</option>
+        <option>13</option>
+        <option>14</option>
+        <option>15</option>
+        <option>16</option>
+        <option>17</option>
+        <option>18</option>
+        <option>19</option>
+        <option>20</option>
+        <option>21</option>
+        <option>22</option>
+        <option>23</option>
+        <option>24</option>
+        <option>25</option>
+        <option>26</option>
+        <option>27</option>
+        <option>28</option>
+        <option>29</option>
+        <option>30</option>
+        <option>31</option>
+      </select>
+      <br>
+      <br>
+      <input type="button" value="Retrieve" onclick="retrieve();">
+    </fieldset>
+    <div class="dataOutput">
+     <!-- <p>Home Team Name:<br />
+      <input type="text" name="homeTeam" id="homeTeam"><br />
+      </p>
+      Away Team Name:<br />
+      <input type="text" name="awayTeam" id="awayTeam"><br />
+      <p>
+       </p>
+      Winning Pitcher:<br />
+      <input type="text" name="winningP" id="winningP"><br />
+      <p>
+       </p>
+      Losing Pitcher:<br />
+      <input type="text" name="losingP" id="losingP"><br />
+      <p>
+       </p>
+      Venue:<br />
+      <input type="text" name="venue" id="venue"><br />
+      <br />
+      <input type="button" value="Previous Game" onclick="previous();">
+      <input type="button" value="Next Game" onclick="next();">
+      <input type="button" value="Save Changes" onclick="save();">-->
+    </div>
+    <br />
+    <div id="divGameInfo"></div>
+  </main>
+
+  <footer></footer>
+
+  <script>
+    //Global 
+    var index = 0;
+    var jsonObject;
+    
+     //================================================
+    //Functions
+    function retrieve() {
+      
+      var year = document.getElementById("yearFilter").value; 
+      var month = document.getElementById("monthFilter").value;
+      var day = document.getElementById("dayFilter").value;
+
+      //console.log(year + month + day);
+      var tempUrl = "http://gd2.mlb.com/components/game/mlb/year_" + year 
+                     + "/month_"+ month + "/day_" + day + "/master_scoreboard.json";
+      console.log(tempUrl);
+      getJSONAsyn(tempUrl, myCallBack);
+      }
+
+        function getJSONAsyn(url, callback){
+            var request = new XMLHttpRequest();
+            request.onreadystatechange = function(){
+                if(request.readyState === 4 && request.status === 200){
+                    callback(request.responseText);
+                    
+                    //console.log(jsonObject);
+                }
+            };
+            request.open("GET", url);
+            request.send();
+        }
+        
+        function myCallBack(baseballJSON){
+            
+          //= jsonObject.data.games.game[index].home_team_name;
+
+            //parse data into object
+            var jsonObject = JSON.parse(baseballJSON);
+            console.log(jsonObject);
+
+            var home = jsonObject.data.games.game[index].home_team_name;
+             document.getElementById("divGameInfo").innerHTML = home;
+
+
+
+
+
+
+
+
+
+
+
+    // function previous()
+    // {
+    //   if (index > 0)
+    //   {
+    //     index--;
+    //   }
+    //   print();
+    // }
+
+    // function next()
+    // {
+    //   if (index < baseballObject.data.games.game.length)
+    //   {
+    //     index++;
+    //   }
+    //   print();
+    // }
+
+    // function print()
+    // {
+    //   var home = baseballObject.data.games.game[index].home_team_name;
+    //   var away = baseballObject.data.games.game[index].away_team_name;
+    //   var winning = baseballObject.data.games.game[index].winning_pitcher.first;
+    //   var winningL = baseballObject.data.games.game[index].winning_pitcher.last;
+    //   var losing = baseballObject.data.games.game[index].losing_pitcher.first;
+    //   var losingL = baseballObject.data.games.game[index].losing_pitcher.last;
+    //   var v = baseballObject.data.games.game[index].venue;
+
+    //   document.getElementById("homeTeam").value = home;
+    //   document.getElementById("awayTeam").value = away;
+    //   //document.getElementById("winningP").value = winning + " " + winningL;
+    //   document.getElementById("losingP").value = losing + " " + losingL;
+    //   document.getElementById("venue").value = v;
+
+      
+
+    //   if (baseballObject.data.games.game[index].winning_pitcher.first == "")
+    //   {
+    //     document.getElementById("winningP").value = "No data";
+    //   }
+    //   else
+    //   {
+    //       document.getElementById("winningP").value = winning + " " + winningL;
+    //   }
+
+
+
+
+    }
+
+
+
+  </script>
+
+</body>
+</htlm>
